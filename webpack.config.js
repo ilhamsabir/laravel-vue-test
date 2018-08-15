@@ -15,8 +15,8 @@ let entries = {
 let outputs = {
 	path: pathOutput,
 	publicPath: '/app/',
-	// filename: '[name].js',
-	filename: '[name].bundle.js',
+	filename: '[name].js',
+	// filename: '[name].bundle.js',
 	chunkFilename: '[id].bundle.js',
 }
 

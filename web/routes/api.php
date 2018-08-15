@@ -17,8 +17,9 @@ Route::group(['prefix' => 'api'], function () {
 
 
 	// api controller
-	Route::get('/crud', 'APICrudController@getList');
-	Route::post('/crud', 'APICrudController@post');
-
+	Route::get('/news', 'APINewsController@getList');
+	Route::post('/news', 'APINewsController@post');
+	Route::get('/news/update', 'APINewsController@update');
+	Route::post('/news/delete', 'APINewsController@delete');
 
 });

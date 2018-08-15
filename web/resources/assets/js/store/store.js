@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 // import builder from './modules/builder'
-import crud from './modules/crud'
+import news from './modules/news'
 
 Vue.use(Vuex)
 
@@ -10,7 +10,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	// actions,
 	modules: {
-		crud,
+		news,
 	},
 })
 

@@ -55,9 +55,7 @@ Build Webpack
 
 Run webpack build
 
-> Developement
 >	npm run dev
 >
 >
-> Production
 >	npm run prod
