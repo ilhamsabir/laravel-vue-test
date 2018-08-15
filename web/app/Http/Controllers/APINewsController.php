@@ -81,8 +81,8 @@ class APINewsController extends Controller
 
 		$callback_data = array(
 			'id' => $id,
-			'title' => $request->get('title'),
-			'description' => $request->get('description'),
+			'title' => $data['title'],
+			'description' => $data['description'],
 		);
 
 		if($response) {

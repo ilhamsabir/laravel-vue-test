@@ -14,18 +14,21 @@
 
 					<div class="search-content">
 						<div class="form-group">
-							<input type="text" class="form-control" placeholder="Search...">
+							<input type="text" class="form-control" placeholder="Search by title ..." v-model="searchTitle">
 						</div>
 					</div>
 
-					<div class="card" v-for="item in listNews" :key="item.id">
+					<div class="card" v-for="item in filteredList" :key="item.id">
 						<div class="card-body">
 							<h5 class="card-title">{{ item.title }}</h5>
 							<p class="card-text">{{ item.description }}</p>
 						</div>
 						<div class="card-footer ">
 							<div class="btn-group">
-								<button type="button" class="btn btn-sm btn-outline-secondary btn-delete">
+								<button
+									type="button"
+									class="btn btn-sm btn-outline-secondary btn-delete"
+									@click="openDeleteModal(true, item.id)">
 									<i class="fa fa-trash"></i> Delete
 								</button>
 								<button
@@ -42,6 +45,8 @@
 		</div>
 
 		<NewsForm />
+
+		<ModalDelete></ModalDelete>
 	</div>
 </template>
 
@@ -52,6 +57,7 @@ import { mapActions, mapMutations, mapGetters } from 'vuex'
 import { baseUrl, userId, CSRF_TOKEN } from '../utils/library.js'
 import bus from '../utils/bus.js'
 import NewsForm from '../components/NewsForm.vue'
+import ModalDelete from '../components/ModalDelete.vue'
 
 const dummy = [
 	{
@@ -96,6 +102,7 @@ export default {
 	name: 'Dashboard',
 	components: {
 		NewsForm,
+		ModalDelete,
 	},
 	data() {
 		return {
@@ -103,16 +110,33 @@ export default {
 			isLoading: true,
 			BASEURL: baseUrl,
 			dummy,
+			searchTitle: '',
 		}
 	},
 	computed: {
 		...mapGetters('news', ['listNews']),
 
-		// filteredList() {
-		// 	const item = this.projectList.filter(elem => {
+		filteredList() {
+			const item = this.listNews.filter(elem => {
+				elem.title = elem.title.toLowerCase()
+				return elem.title.indexOf(this.searchTitle) !== -1
+			})
+
+			return item
+		},
+
+		// filteredItems() {
+		// 	// eslint-disable-next-line
+		// 	const items = this.items || []
+		// 	const item = items.filter(elem => {
 		// 		elem.name = elem.name.toLowerCase()
-		// 		return elem.name.indexOf(this.searchProject) !== -1
+		// 		if (this.typeSearch === 'assigned') {
+		// 			return elem.assigned === true ? elem : ''
+		// 		}
+
+		// 		return elem
 		// 	})
+
 		// 	return item
 		// },
 	},
@@ -126,6 +150,10 @@ export default {
 
 		openAddModal(status, type, id) {
 			bus.$emit('open-modal-add', status, type, id)
+		},
+
+		openDeleteModal(status, id) {
+			bus.$emit('open-modal-delete', status, id)
 		},
 	},
 }

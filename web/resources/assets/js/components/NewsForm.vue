@@ -44,11 +44,16 @@
 					class="btn btn-primary"
 					v-if="typeForm === 'new'"
 					@click="createNew">Save</button>
-				<button type="button" class="btn btn-primary" v-else>Update</button>
+				<button
+					type="button"
+					class="btn btn-primary"
+					@click="submitUpdate"
+					v-else>Update</button>
 			</div>
 		</div>
 	</div>
-</div>
+	</div>
+
 </template>
 <script>
 import { mapActions, mapMutations, mapGetters } from 'vuex'
@@ -66,6 +71,7 @@ export default {
 			projectName: '',
 			editorData: '',
 			typeForm: 'new',
+			id: '',
 			title: '',
 			description: '',
 			valid: {
@@ -98,7 +104,19 @@ export default {
 			bus.$emit('open-modal-add', status)
 		},
 
-		initModal() {},
+		initModalEdit(id) {
+			const data = this.listNews.filter(el => (el.id === id ? el : ''))
+			this.id = data[0].id
+			this.title = data[0].title
+			this.description = data[0].description
+		},
+
+		submitUpdate() {
+			const valid = this.validationForm()
+			if (valid) {
+				this.updateData()
+			}
+		},
 
 		onChangeInput(type) {
 			if (type === 'title') {
@@ -112,8 +130,7 @@ export default {
 			}
 		},
 
-		// on click save create new
-		createNew() {
+		validationForm() {
 			let valid
 			if (this.title !== '' && this.description !== '') {
 				this.valid.title.error = false
@@ -130,8 +147,15 @@ export default {
 			} else {
 				this.valid.title.error = true
 				this.valid.description.error = true
-				valid = true
+				valid = false
 			}
+
+			return valid
+		},
+
+		// on click save create new
+		createNew() {
+			const valid = this.validationForm()
 
 			if (valid) {
 				this.postNew()
@@ -154,14 +178,39 @@ export default {
 			} catch (err) {}
 		},
 
+		async updateData() {
+			const data = {
+				id: this.id,
+				title: this.title,
+				description: this.description,
+			}
+
+			try {
+				const response = await updateNews(data)
+
+				if (response.data.error === 0) {
+					this.successUpdateNews(response.data.data)
+				}
+			} catch (error) {}
+		},
+
 		successPostNew(data) {
+			const newData = [data, ...this.listNews]
+			this.setListNews(newData)
+			this.doneSubmit()
+		},
+
+		successUpdateNews(data) {
+			const newData = this.listNews.filter(item => parseInt(item.id) !== parseInt(data.id))
+			const datas = [...newData, data]
+			this.setListNews(datas)
+			this.doneSubmit()
+		},
+
+		doneSubmit() {
 			this.title = ''
 			this.description = ''
 			this.toggleModal(false)
-
-			const newData = [data, ...this.listNews]
-
-			this.setListNews(newData)
 		},
 
 		useNextTick() {
@@ -176,10 +225,17 @@ export default {
 
 		eventBusHandler() {
 			bus.$on('open-modal-add', (status, type, id) => {
+				this.title = ''
+				this.description = ''
+				this.valid.title.error = false
+				this.valid.description.error = false
 				this.typeForm = type
 				if (status) {
 					$('#addNewModal').modal('show')
-					this.initModal()
+
+					if (type === 'edit') {
+						this.initModalEdit(id)
+					}
 				} else {
 					$('#addNewModal').modal('hide')
 				}

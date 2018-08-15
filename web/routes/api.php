@@ -19,7 +19,7 @@ Route::group(['prefix' => 'api'], function () {
 	// api controller
 	Route::get('/news', 'APINewsController@getList');
 	Route::post('/news', 'APINewsController@post');
-	Route::get('/news/update', 'APINewsController@update');
+	Route::post('/news/update', 'APINewsController@update');
 	Route::post('/news/delete', 'APINewsController@delete');
 
 });

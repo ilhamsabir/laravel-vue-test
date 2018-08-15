@@ -71,14 +71,14 @@ export const deleteNews = (id) => {
 
 	const url = `${BASEAPI}/api/news/delete`
 
-	const dataProject = {
-		id
-	}
+	const formData = new FormData()
+
+	formData.append('id', id)
 
 	const config = {
 		url,
 		method: 'post',
-		data: dataProject,
+		data: formData,
 		headers: configHeader,
 	}
 

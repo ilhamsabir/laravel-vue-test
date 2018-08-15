@@ -37,6 +37,15 @@ Move to root folder and install PHP Depedencies
 >	composer install
 
 
+Migrate Database
+-------------
+
+Move to folder 'web' and Migrate db to create table on your db
+
+>	cd web && php artisan migrate
+
+
+
 Install JavaScript Depedencies
 -------------
 
